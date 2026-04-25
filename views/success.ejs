@@ -219,20 +219,33 @@ document.getElementById('download-btn').addEventListener('click', function() {
 
     const cert = document.getElementById('certificate-node');
     
-    html2canvas(cert, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'StreetBites-Certificate.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        
-        btn.innerHTML = originalContent;
-        btn.classList.remove('opacity-75', 'cursor-not-allowed');
-    }).catch(err => {
-        console.error("Could not generate certificate", err);
-        btn.innerHTML = originalContent;
-        btn.classList.remove('opacity-75', 'cursor-not-allowed');
-        alert("There was an error generating the certificate. Please try again.");
-    });
+    // Temporarily scroll to top to prevent html2canvas bottom clipping bug
+    const originalScroll = window.scrollY;
+    window.scrollTo(0, 0);
+    
+    setTimeout(() => {
+        html2canvas(cert, { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: '#ffffff',
+            scrollY: 0
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'StreetBites-Certificate.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            window.scrollTo(0, originalScroll);
+            btn.innerHTML = originalContent;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }).catch(err => {
+            console.error("Could not generate certificate", err);
+            window.scrollTo(0, originalScroll);
+            btn.innerHTML = originalContent;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            alert("There was an error generating the certificate. Please try again.");
+        });
+    }, 100);
 });
 </script>
 
