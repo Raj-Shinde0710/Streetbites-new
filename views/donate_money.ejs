@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate Money - StreetBites</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/style.css">
+<link rel="shortcut icon" href="/icon.png" type="image/x-icon">
+</head>
+<body class="bg-gray-50">
+<header class="bg-white shadow-md">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a href="/" class="flex items-center space-x-4">
+<img src="/STREET-removebg-preview.png" class="h-20">
+<div>
+<p class="font-bold text-3xl text-blue-800">StreetBites</p>
+<p class="text-gray-600">Feeding Hope, Building Tomorrow</p>
+</div>
+</a>
+</nav>
+</header>
+
+<main class="container mx-auto px-6 py-12">
+<div class="max-w-3xl mx-auto bg-white p-10 rounded-xl shadow-lg">
+<h1 class="text-3xl font-bold mb-6 text-yellow-600">
+<% if(type==="organization"){ %>
+Organization Monetary Donation
+<% } else { %>
+Individual Monetary Donation
+<% } %>
+</h1>
+
+<form id="donationForm" action="/donate/money/<%= type %>" method="POST" class="space-y-6">
+<% if(type==="organization"){ %>
+<div>
+<label class="font-semibold text-gray-700">Organization Name</label>
+<input type="text" name="organizationName" required class="w-full border p-2 rounded mt-1">
+</div>
+<% } else { %>
+<div>
+<label class="font-semibold text-gray-700">Full Name</label>
+<input type="text" name="fullName" required class="w-full border p-2 rounded mt-1">
+</div>
+<% } %>
+
+<div>
+<label class="font-semibold text-gray-700">Email</label>
+<input type="email" name="email" required class="w-full border p-2 rounded mt-1">
+</div>
+
+<div>
+<label class="font-semibold text-gray-700">Mobile</label>
+<input type="text" name="mobile" required class="w-full border p-2 rounded mt-1">
+</div>
+
+<div>
+<label class="font-semibold text-gray-700">Donation Amount (₹)</label>
+<input type="number" name="amount" min="1" placeholder="e.g. 500" required class="w-full border p-2 rounded mt-1 text-lg font-bold text-green-700">
+</div>
+
+<div>
+<label class="font-semibold text-gray-700">Message (Optional)</label>
+<textarea name="message" rows="3" placeholder="Leave a message with your donation..." class="w-full border p-2 rounded mt-1"></textarea>
+</div>
+
+<button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded mt-6 shadow-lg transition duration-300">
+Proceed to Donate
+</button>
+</form>
+
+</div>
+</main>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('donationForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const form = e.target;
+  const formData = new FormData(form);
+  const amount = formData.get('amount');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerText;
+  
+  submitBtn.innerText = "Processing...";
+  submitBtn.disabled = true;
+  
+  try {
+    const response = await fetch('/create-razorpay-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount })
+    });
+    const order = await response.json();
+    
+    const options = {
+      "key": "<%= razorpayKey %>",
+      "amount": order.amount,
+      "currency": "INR",
+      "name": "StreetBites",
+      "description": "Donation",
+      "order_id": order.id,
+      "handler": function (response){
+        const paymentIdInput = document.createElement('input');
+        paymentIdInput.type = 'hidden';
+        paymentIdInput.name = 'razorpay_payment_id';
+        paymentIdInput.value = response.razorpay_payment_id;
+        form.appendChild(paymentIdInput);
+        
+        const orderIdInput = document.createElement('input');
+        orderIdInput.type = 'hidden';
+        orderIdInput.name = 'razorpay_order_id';
+        orderIdInput.value = response.razorpay_order_id;
+        form.appendChild(orderIdInput);
+        
+        const signatureInput = document.createElement('input');
+        signatureInput.type = 'hidden';
+        signatureInput.name = 'razorpay_signature';
+        signatureInput.value = response.razorpay_signature;
+        form.appendChild(signatureInput);
+        
+        form.submit();
+      },
+      "prefill": {
+        "name": formData.get('<%= type === "organization" ? "organizationName" : "fullName" %>'),
+        "email": formData.get('email'),
+        "contact": formData.get('mobile')
+      },
+      "theme": {
+        "color": "#eab308"
+      }
+    };
+    
+    const rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+      alert("Payment failed! Reason: " + response.error.description);
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+    });
+    rzp1.open();
+  } catch (error) {
+    console.error(error);
+    alert("Failed to initialize payment. Please try again.");
+    submitBtn.innerText = originalText;
+    submitBtn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>

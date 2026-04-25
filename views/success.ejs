@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Thank You - StreetBites</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/style.css">
+<link rel="shortcut icon" href="/icon.png" type="image/x-icon">
+
+<link rel="shortcut icon" href="/icon.png" type="image/x-icon">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Header -->
+
+<header class="bg-white shadow-md sticky top-0 z-40">
+
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+
+<a href="/" class="flex items-center space-x-6">
+
+<img src="/STREET-removebg-preview.png" class="h-32 w-auto">
+
+<div class="hidden sm:block">
+<p class="font-bold text-4xl text-blue-800">StreetBites</p>
+<p class="text-lg text-gray-600">Feeding Hope, Building Tomorrow</p>
+</div>
+
+</a>
+
+</nav>
+
+</header>
+
+
+
+<!-- Thank You Section & Certificate -->
+
+<section class="py-16 flex flex-col items-center justify-center min-h-[70vh]">
+
+<div class="container mx-auto px-6 text-center mb-12">
+
+<div class="bg-white shadow-xl rounded-xl p-12 max-w-2xl mx-auto">
+
+<h1 class="text-4xl md:text-5xl font-serif font-bold text-green-600 mb-6">
+Thank You for Your Donation!
+</h1>
+
+<p class="text-lg text-gray-600 mb-8">
+Your generosity helps provide meals and support to people in need.  
+Our volunteers will contact you soon to arrange the pickup.
+</p>
+
+<div class="space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center">
+
+<a href="/"
+class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition transform hover:-translate-y-1">
+Return to Home
+</a>
+
+<a href="/"
+class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition transform hover:-translate-y-1">
+Make Another Donation
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Certificate Section -->
+<div class="w-full px-4 flex flex-col items-center">
+    <div id="certificate-node" class="relative bg-white w-full max-w-5xl shadow-2xl" style="border: 14px solid #0B1E4A; padding: 6px;">
+        <div class="relative bg-white w-full h-full flex flex-col items-center py-12 px-8 md:px-16 border-[3px]" style="border-color: #C59B37;">
+            
+            <!-- Corner Accents (Approximation with CSS triangles/borders if needed, but keeping it clean with borders works well) -->
+            <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#0B1E4A]"></div>
+            <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#0B1E4A]"></div>
+            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#0B1E4A]"></div>
+            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#0B1E4A]"></div>
+
+            <!-- Top Header -->
+            <div class="w-full flex justify-between items-center mb-8">
+                <img src="/prayaas_logo.png" alt="Prayaas Logo" class="h-28 md:h-32 w-auto object-contain">
+                <div class="text-center px-4">
+                    <h1 class="text-3xl md:text-5xl font-serif font-bold text-[#0B1E4A]">Prayaas Youth Foundation</h1>
+                    <p class="text-lg md:text-xl text-[#237537] italic mt-2 font-serif">...an effort to make a difference</p>
+                </div>
+                <img src="/streetbites_logo.png" alt="StreetBites Logo" class="h-40 md:h-48 w-auto object-contain">
+            </div>
+
+            <!-- Title -->
+            <div class="text-center mb-6">
+                <div class="flex items-center justify-center space-x-4 mb-2">
+                    <div class="h-[2px] bg-[#C59B37] w-32"></div>
+                    <span class="text-[#C59B37] text-xl">❖</span>
+                    <div class="h-[2px] bg-[#C59B37] w-32"></div>
+                </div>
+                <h2 class="text-5xl md:text-7xl font-serif font-bold text-[#C59B37] tracking-[0.2em] uppercase mt-4 mb-4">Certificate</h2>
+                <div class="flex items-center justify-center space-x-6">
+                    <div class="h-[2px] bg-[#0B1E4A] w-20"></div>
+                    <h3 class="text-2xl md:text-3xl font-serif text-[#0B1E4A] tracking-[0.15em] uppercase">Of Appreciation</h3>
+                    <div class="h-[2px] bg-[#0B1E4A] w-20"></div>
+                </div>
+            </div>
+
+            <!-- Subtitle -->
+            <p class="text-xl md:text-2xl font-serif text-[#0B1E4A] mt-4 mb-6">This certificate is proudly presented to</p>
+
+            <!-- Name -->
+            <div class="w-full max-w-3xl border-b-2 border-[#0B1E4A] pb-2 text-center mb-8">
+                <h3 class="text-6xl md:text-7xl text-[#0B1E4A] px-8" style="font-family: 'Great Vibes', cursive;">
+                    <%= typeof donorName !== 'undefined' && donorName ? donorName : 'Generous Donor' %>
+                </h3>
+            </div>
+
+            <!-- Body Text -->
+            <p class="text-lg md:text-xl font-serif text-[#0B1E4A] text-center max-w-4xl leading-relaxed mb-6 px-4">
+                for your generous donation and support to the noble cause of serving humanity.<br>
+                Your contribution through <strong class="font-bold">StreetBites</strong> has helped in providing food, clothing,<br>
+                and hope to those in need. We truly appreciate your kindness and commitment<br>
+                towards making a difference in the society.
+            </p>
+
+            <!-- Decorative Heart Divider -->
+            <div class="flex items-center justify-center space-x-4 mb-6">
+                <div class="h-px bg-[#C59B37] w-24"></div>
+                <span class="text-[#C59B37] text-xl">♥</span>
+                <div class="h-px bg-[#C59B37] w-24"></div>
+            </div>
+
+            <!-- Tagline -->
+            <p class="text-xl md:text-2xl font-serif text-[#237537] italic font-bold mb-12">
+                Together, let's create a hunger-free and better tomorrow.
+            </p>
+
+            <!-- Footer Signatures & Badge -->
+            <div class="w-full flex justify-between items-end px-4 md:px-12 pb-4">
+                
+                <!-- Left Signature -->
+                <div class="text-center flex flex-col items-center">
+                    <div class="text-4xl text-gray-700 mb-2 h-10 flex items-end" style="font-family: 'Great Vibes', cursive;">Signatory</div>
+                    <div class="w-48 md:w-64 border-b border-[#0B1E4A] mb-2"></div>
+                    <p class="text-sm md:text-base font-bold text-[#0B1E4A]">Authorized Signatory</p>
+                    <p class="text-xs md:text-sm text-[#0B1E4A]">Prayaas Youth Foundation</p>
+                </div>
+
+                <!-- Center Badge -->
+                <div class="relative flex flex-col items-center justify-center -mb-8">
+                    <!-- Ribbon tails -->
+                    <div class="absolute -bottom-8 -left-4 w-12 h-16 bg-[#C59B37] transform rotate-12 -z-10" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);"></div>
+                    <div class="absolute -bottom-8 -right-4 w-12 h-16 bg-[#C59B37] transform -rotate-12 -z-10" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);"></div>
+                    
+                    <!-- Circle Badge -->
+                    <div class="w-28 h-28 bg-[#0B1E4A] rounded-full border-4 border-[#C59B37] flex flex-col items-center justify-center text-white p-2 shadow-lg z-10 outline-double outline-[#C59B37]">
+                        <p class="text-[0.6rem] uppercase font-serif text-center leading-tight tracking-wider">Thank You<br>For Making<br>A Difference</p>
+                        <p class="text-[#C59B37] text-sm mt-1">★★★</p>
+                    </div>
+                </div>
+
+                <!-- Right Signature -->
+                <div class="text-center flex flex-col items-center">
+                    <div class="text-4xl text-gray-700 mb-2 h-10 flex items-end" style="font-family: 'Great Vibes', cursive;">Founder</div>
+                    <div class="w-48 md:w-64 border-b border-[#0B1E4A] mb-2"></div>
+                    <p class="text-sm md:text-base font-bold text-[#0B1E4A]">Founder / Director</p>
+                    <p class="text-xs md:text-sm text-[#0B1E4A]">Prayaas Youth Foundation</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <button id="download-btn" class="mt-8 mb-12 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 hover:shadow-xl flex items-center space-x-3 text-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>Download Certificate</span>
+    </button>
+</div>
+
+</section>
+
+
+
+<!-- Footer -->
+
+<footer class="bg-gray-800 text-white py-12">
+
+<div class="container mx-auto px-6 text-center">
+
+<p class="text-gray-400 mb-4">
+"Helping one person might not change the world, but it could change the world for one person."
+</p>
+
+<p class="text-gray-500">
+© 2025 StreetBites. All Rights Reserved.
+</p>
+
+</div>
+
+</footer>
+
+<script>
+document.getElementById('download-btn').addEventListener('click', function() {
+    const btn = this;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<span>Generating...</span>';
+    btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+    const cert = document.getElementById('certificate-node');
+    
+    html2canvas(cert, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'StreetBites-Certificate.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.innerHTML = originalContent;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+    }).catch(err => {
+        console.error("Could not generate certificate", err);
+        btn.innerHTML = originalContent;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        alert("There was an error generating the certificate. Please try again.");
+    });
+});
+</script>
+
+</body>
+</html>
