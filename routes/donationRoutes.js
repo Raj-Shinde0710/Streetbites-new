@@ -136,7 +136,7 @@ router.post("/donate/clothes/individual", async (req, res) => {
     res.render("success", { donorName: req.body.fullName });
   } catch (err) {
     console.error(err);
-    res.send("Error saving individual clothes donation");
+    res.send("Error saving individual clothes donation: " + err.message);
   }
 });
 
