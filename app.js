@@ -6,6 +6,7 @@ const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
 
 const connectDB = require("./utils/dbConnect");
+const { classifyDatabaseError } = require("./utils/dbConnect");
 const donationRoutes = require("./routes/donationRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -44,12 +45,9 @@ let sessionStore;
 if (mongoURI && !mongoURI.includes("<db_password>") && !mongoURI.includes("<password>")) {
   try {
     sessionStore = MongoStore.create({
-      mongoUrl: mongoURI,
+      clientPromise: connectDB().then((m) => m.connection.getClient()),
       collectionName: "sessions",
-      ttl: 24 * 60 * 60, // 1 day
-      mongoOptions: {
-        serverSelectionTimeoutMS: 5000
-      }
+      ttl: 24 * 60 * 60 // 1 day
     });
 
     sessionStore.on("error", (err) => {
@@ -91,15 +89,49 @@ app.use(
 // Global context middleware (makes currentUser, isAdmin, and alerts available in all views)
 app.use(attachUser);
 
-// Production Diagnostics: Lightweight Health Endpoint (Requirement 8)
-app.get("/api/health", (req, res) => {
+// Production Diagnostics: Health & Database Diagnostic Endpoint (Step 3)
+app.get("/api/health", async (req, res) => {
   const states = ["disconnected", "connected", "connecting", "disconnecting"];
-  const dbState = states[mongoose.connection.readyState] || "unknown";
+  let dbState = states[mongoose.connection.readyState] || "unknown";
+  let diagnostic = null;
+
+  // If disconnected, test connection on-demand to diagnose
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB();
+      dbState = "connected";
+    } catch (err) {
+      dbState = "disconnected";
+      diagnostic = classifyDatabaseError(err, process.env.MONGODB_URI);
+    }
+  }
+
+  const isConfigured = Boolean(process.env.MONGODB_URI);
+  let uriScheme = "none";
+  let clusterHost = "none";
+  let dbName = "none";
+
+  if (isConfigured) {
+    const raw = process.env.MONGODB_URI.trim();
+    uriScheme = raw.startsWith("mongodb+srv://") ? "mongodb+srv" : raw.startsWith("mongodb://") ? "mongodb" : "other";
+    const hostMatch = raw.match(/@([^/?]+)/);
+    if (hostMatch) clusterHost = hostMatch[1];
+    const dbMatch = raw.match(/@(?:[^/?]+)\/([^?]+)/);
+    if (dbMatch) dbName = dbMatch[1];
+  }
 
   res.status(200).json({
     status: "ok",
     database: dbState,
     environment: process.env.NODE_ENV || (process.env.VERCEL ? "production" : "development"),
+    mongodb: {
+      configured: isConfigured,
+      scheme: uriScheme,
+      cluster: clusterHost,
+      databaseName: dbName,
+      hasPlaceholder: isConfigured && (process.env.MONGODB_URI.includes("<db_password>") || process.env.MONGODB_URI.includes("<password>"))
+    },
+    diagnostic,
     timestamp: new Date().toISOString()
   });
 });
@@ -124,10 +156,13 @@ app.use(async (req, res, next) => {
     await connectDB();
     next();
   } catch (err) {
-    console.error(`[DB Middleware] Connection failed for ${req.method} ${req.path}:`, err.message);
-    return res.status(503).render("admin/forbidden", {
-      title: "Service Temporarily Unavailable - StreetBites",
-      message: "Database connection could not be established. Please verify MONGODB_URI and MongoDB Atlas Network Access whitelist (0.0.0.0/0)."
+    console.error(`[DB Middleware] Connection failed for ${req.method} ${req.path}:`, err.name, err.message);
+    const diag = classifyDatabaseError(err, process.env.MONGODB_URI);
+    return res.status(diag.statusCode).render("db_error", {
+      title: diag.title,
+      category: diag.category,
+      message: diag.message,
+      action: diag.action
     });
   }
 });
