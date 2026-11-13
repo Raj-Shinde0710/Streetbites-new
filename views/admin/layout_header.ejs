@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Admin Dashboard - StreetBites' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="/icon.png" type="image/x-icon">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="admin-sidebar" class="w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 transition-all duration-300 z-50 fixed md:static inset-y-0 left-0 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+        <!-- Logo & Branding -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-800">
+            <a href="/admin/dashboard" class="flex items-center space-x-3">
+                <img src="/STREET-removebg-preview.png" alt="StreetBites" class="h-10 w-auto brightness-200">
+                <div>
+                    <span class="text-lg font-bold text-white tracking-tight">StreetBites</span>
+                    <span class="block text-[10px] uppercase tracking-wider text-indigo-400 font-semibold">Admin Console</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-grow px-4 py-6 space-y-1.5 overflow-y-auto">
+            <!-- 1. Overview -->
+            <a href="/admin/dashboard" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white' %>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span>Overview</span>
+            </a>
+
+            <!-- 2. All Donations -->
+            <a href="/admin/donations" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition <%= typeof activePage !== 'undefined' && activePage === 'donations' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white' %>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <span>All Donations</span>
+            </a>
+
+            <!-- 3. Food Donations -->
+            <a href="/admin/donations?category=food" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition <%= typeof activePage !== 'undefined' && activePage === 'food' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white' %>">
+                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <span>Food Donations</span>
+            </a>
+
+            <!-- 4. Clothes Donations -->
+            <a href="/admin/donations?category=clothes" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition <%= typeof activePage !== 'undefined' && activePage === 'clothes' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white' %>">
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span>Clothes Donations</span>
+            </a>
+
+            <!-- 5. Money Donations -->
+            <a href="/admin/donations?category=money" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition <%= typeof activePage !== 'undefined' && activePage === 'money' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white' %>">
+                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Money Donations</span>
+            </a>
+
+            <!-- 6. Users -->
+            <a href="/admin/users" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition <%= typeof activePage !== 'undefined' && activePage === 'users' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white' %>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span>Users</span>
+            </a>
+
+            <div class="pt-4 border-t border-slate-800"></div>
+
+            <!-- Public Site Link -->
+            <a href="/" target="_blank" class="flex items-center space-x-3 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <span>View Public Website</span>
+            </a>
+
+            <!-- 7. Logout -->
+            <a href="/admin/logout" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span>Logout</span>
+            </a>
+        </nav>
+
+        <!-- Current Admin Footer -->
+        <div class="p-4 border-t border-slate-800 text-xs">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-full bg-indigo-700 text-white flex items-center justify-center font-bold">
+                    A
+                </div>
+                <div class="truncate">
+                    <p class="font-semibold text-white truncate"><%= typeof currentUser !== 'undefined' && currentUser ? currentUser.fullName : 'Administrator' %></p>
+                    <p class="text-[10px] text-slate-400 truncate">Role: System Admin</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Layout Area -->
+    <div class="flex-grow flex flex-col min-w-0 overflow-hidden">
+        <!-- Top Header -->
+        <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 flex-shrink-0">
+            <div class="flex items-center space-x-4">
+                <button id="mobile-sidebar-toggle" class="md:hidden text-slate-600 hover:text-slate-900 p-2 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 capitalize">
+                        <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'Dashboard Overview' : typeof activePage !== 'undefined' ? activePage + ' Management' : 'Admin Panel' %>
+                    </h1>
+                    <p class="text-xs text-slate-500">Manage real-time donations & users across StreetBites</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <a href="/" target="_blank" class="hidden sm:inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition">
+                    <span>Live Website</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+                <a href="/admin/logout" class="bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                    Sign Out
+                </a>
+            </div>
+        </header>
+
+        <!-- Dynamic Alert Messages -->
+        <% if (typeof errorMsg !== 'undefined' && errorMsg) { %>
+            <div class="mx-6 mt-4 p-3.5 bg-rose-50 border-l-4 border-rose-500 text-rose-700 text-xs rounded shadow-sm">
+                <%= errorMsg %>
+            </div>
+        <% } %>
+        <% if (typeof successMsg !== 'undefined' && successMsg) { %>
+            <div class="mx-6 mt-4 p-3.5 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 text-xs rounded shadow-sm">
+                <%= successMsg %>
+            </div>
+        <% } %>
+
+        <!-- Content Area -->
+        <main class="flex-grow overflow-y-auto p-6 md:p-8">
+
