@@ -251,13 +251,15 @@ router.post("/donate/money/individual", requireLogin, async (req, res) => {
       return res.status(400).send("Payment signature details are missing.");
     }
 
-    if (process.env.RAZORPAY_KEY_SECRET) {
-      const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
-      shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-      const digest = shasum.digest("hex");
-      if (digest !== razorpay_signature) {
-        return res.status(400).send("Payment signature verification failed. Transaction cannot be validated.");
-      }
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).send("Razorpay payment gateway secret is not configured on the server.");
+    }
+
+    const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest("hex");
+    if (digest !== razorpay_signature) {
+      return res.status(400).send("Payment signature verification failed. Transaction cannot be validated.");
     }
 
     const donationData = {
@@ -293,13 +295,15 @@ router.post("/donate/money/organization", requireLogin, async (req, res) => {
       return res.status(400).send("Payment signature details are missing.");
     }
 
-    if (process.env.RAZORPAY_KEY_SECRET) {
-      const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
-      shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-      const digest = shasum.digest("hex");
-      if (digest !== razorpay_signature) {
-        return res.status(400).send("Payment signature verification failed. Transaction cannot be validated.");
-      }
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).send("Razorpay payment gateway secret is not configured on the server.");
+    }
+
+    const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest("hex");
+    if (digest !== razorpay_signature) {
+      return res.status(400).send("Payment signature verification failed. Transaction cannot be validated.");
     }
 
     const donationData = {

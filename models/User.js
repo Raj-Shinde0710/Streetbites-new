@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema(
 // Pre-save hook to hash password if modified
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
+  // If password is already a valid bcrypt hash, do not re-hash it
+  if (/^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(this.password)) {
+    return;
+  }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -67,5 +71,5 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.models.User || mongoose.model("User", userSchema);
 

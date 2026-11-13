@@ -2,12 +2,18 @@ const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
 
-const DATA_DIR = path.join(__dirname, "..", "data");
+// Determine writable directory (Vercel serverless filesystem is read-only except /tmp)
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const DATA_DIR = isServerless ? path.join("/tmp", "streetbites-data") : path.join(__dirname, "..", "data");
 const STORAGE_FILE = path.join(DATA_DIR, "donations.json");
 
-// Ensure data folder exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+// Ensure data folder exists safely
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (err) {
+  console.warn("[Storage Notice]: Writable data directory could not be created:", err.message);
 }
 
 // Map model names to model instances
@@ -28,32 +34,46 @@ function readLocalDonations() {
     const raw = fs.readFileSync(STORAGE_FILE, "utf-8");
     return JSON.parse(raw || "[]");
   } catch (err) {
-    console.error("[Storage] Error reading local donations:", err.message);
+    console.warn("[Storage] Notice: Could not read local donations:", err.message);
     return [];
   }
 }
 
 function writeLocalDonations(donations) {
   try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(STORAGE_FILE, JSON.stringify(donations, null, 2), "utf-8");
   } catch (err) {
-    console.error("[Storage] Error writing local donations:", err.message);
+    console.warn("[Storage] Notice: Could not write local donations backup:", err.message);
   }
 }
 
 function saveLocal(modelName, data, synced = false) {
-  const donations = readLocalDonations();
-  const entry = {
-    id: "loc_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
-    modelName,
-    data,
-    synced,
-    createdAt: new Date().toISOString()
-  };
-  donations.push(entry);
-  writeLocalDonations(donations);
-  console.log(`[Storage] Saved ${modelName} to local storage (${synced ? 'synced' : 'pending sync'})`);
-  return entry;
+  try {
+    const donations = readLocalDonations();
+    const entry = {
+      id: "loc_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
+      modelName,
+      data,
+      synced,
+      createdAt: new Date().toISOString()
+    };
+    donations.push(entry);
+    writeLocalDonations(donations);
+    console.log(`[Storage] Saved ${modelName} to local storage (${synced ? 'synced' : 'pending sync'})`);
+    return entry;
+  } catch (err) {
+    console.warn("[Storage] Warning: Local storage write failed:", err.message);
+    return {
+      id: "loc_" + Date.now(),
+      modelName,
+      data,
+      synced,
+      createdAt: new Date().toISOString()
+    };
+  }
 }
 
 /**
@@ -65,13 +85,17 @@ async function saveDonation(modelName, docData) {
     throw new Error(`Unknown donation model: ${modelName}`);
   }
 
-  // If MongoDB is connected, attempt to save directly to DB
+  // If MongoDB is connected, save directly to DB
   if (mongoose.connection.readyState === 1) {
     try {
       const doc = new Model(docData);
       const savedDoc = await doc.save();
-      console.log(`[Storage] Saved ${modelName} to MongoDB successfully.`);
-      saveLocal(modelName, docData, true);
+      console.log(`[Storage] Saved ${modelName} to MongoDB Atlas successfully.`);
+      try {
+        saveLocal(modelName, docData, true);
+      } catch (localErr) {
+        // Safe to ignore local file errors if DB save succeeded
+      }
       return { success: true, source: "mongodb", doc: savedDoc };
     } catch (err) {
       console.warn(`[Storage] MongoDB save failed: ${err.message}. Falling back to local storage.`);
@@ -126,4 +150,3 @@ module.exports = {
   syncPendingDonations,
   readLocalDonations
 };
-

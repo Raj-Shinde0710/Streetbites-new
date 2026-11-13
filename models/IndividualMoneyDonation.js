@@ -32,4 +32,4 @@ const individualMoneyDonationSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model("IndividualMoneyDonation", individualMoneyDonationSchema);
+module.exports = mongoose.models.IndividualMoneyDonation || mongoose.model("IndividualMoneyDonation", individualMoneyDonationSchema);

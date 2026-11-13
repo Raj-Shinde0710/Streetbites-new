@@ -34,4 +34,4 @@ const organizationDonationSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model("OrganizationDonation", organizationDonationSchema);
+module.exports = mongoose.models.OrganizationDonation || mongoose.model("OrganizationDonation", organizationDonationSchema);

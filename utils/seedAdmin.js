@@ -3,7 +3,7 @@ const User = require("../models/User");
 async function seedAdmin() {
   try {
     const adminUsername = (process.env.ADMIN_USERNAME || "admin").toLowerCase().trim();
-    const adminPassword = process.env.ADMIN_PASSWORD || "Admin@StreetBites2026";
+    const adminPassword = process.env.ADMIN_PASSWORD_HASH || process.env.ADMIN_PASSWORD || "Admin@StreetBites2026";
     const adminEmail = (process.env.ADMIN_EMAIL || "admin@streetbites.org").toLowerCase().trim();
 
     // Check if an admin user already exists

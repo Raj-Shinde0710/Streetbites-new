@@ -1,0 +1,12 @@
+/* StreetBites Production Fallback Stylesheet */
+/* Core UI styling is powered dynamically via Tailwind CSS and Google Fonts */
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #10b981;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
